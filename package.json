@@ -1,0 +1,19 @@
+{
+    "type": "commonjs",
+    "scripts": {
+        "start": "ts-node --project tsconfig.json app/app.ts",
+        "build": "tsc",
+        "run": "node dist/app/app.js"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/node": "^25.5.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^6.0.2"
+    },
+    "dependencies": {
+        "dotenv": "^17.4.2",
+        "express": "^5.2.1",
+        "mysql2": "^3.22.0"
+    }
+}
