@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>New Diary Entry</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        margin-bottom: 8px;
+        color: #4CAF50;
+    }
+
+    p {
+        color: #bbb;
+    }
+
+    .card {
+        background: #1e1e1e;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 720px;
+        margin: 0 auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    }
+
+    .field {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #c8ffc8;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        background: #171717;
+        color: #e0e0e0;
+        outline: none;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    input[type="radio"] {
+        margin-right: 8px;
+    }
+
+    .emoji-grid,
+    .rating-grid {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+
+    .emoji-option,
+    .rating-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 12px;
+        border: 1px solid #333;
+        border-radius: 12px;
+        background: #161616;
+        cursor: pointer;
+        transition: border-color .2s, background .2s, transform .2s;
+    }
+
+    .emoji-option:hover,
+    .rating-option:hover {
+        border-color: #4caf50;
+        background: #1f1f1f;
+        transform: translateY(-1px);
+    }
+
+    .emoji-option input,
+    .rating-option input {
+        display: none;
+    }
+
+    .emoji-option.selected,
+    .rating-option.selected {
+        border-color: #4caf50;
+        background: #203020;
+    }
+
+    .emoji-option span,
+    .rating-option span {
+        font-size: 20px;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border: 1px solid #333;
+        border-radius: 10px;
+        background: #161616;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+
+    .radio-option:hover {
+        border-color: #4caf50;
+        background: #1f1f1f;
+    }
+
+    .radio-option input {
+        margin: 0;
+    }
+
+        .collapsible {
+        position: relative;
+        border: 1px solid #333;
+        border-radius: 12px;
+        background: #161616;
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+
+    .collapsible summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #e0e0e0;
+        font-weight: bold;
+        background: #171717;
+        border-bottom: 1px solid #333;
+    }
+
+    .collapsible summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .collapsible::after {
+        content: "▼";
+        position: absolute;
+        right: 18px;
+        font-size: 14px;
+        color: #4CAF50;
+        transform: rotate(0deg);
+        transition: transform .2s;
+    }
+
+    .collapsible[open]::after {
+        transform: rotate(-180deg);
+    }
+
+    .collapsible > .field {
+        padding: 14px 16px;
+    }
+
+    .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #4CAF50;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+    .button:hover {
+        background: #45a049;
+    }
+
+    .summary {
+        margin-top: 24px;
+        padding: 18px;
+        border-radius: 10px;
+        background: #171717;
+        border: 1px solid #2a2a2a;
+    }
+
+    .summary h2 {
+        margin-top: 0;
+        color: #4CAF50;
+    }
+
+    .summary p {
+        margin: 8px 0;
+        color: #d4ffd4;
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Log a New Entry</h1>
+    <p>Record where you watched it, who you were with, and what you were snacking on.</p>
+
+    <div class="field">
+        <label for="movieTitle">Movie title</label>
+        <input type="text" id="movieTitle" placeholder="Enter film title">
+    </div>
+
+    <div class="field">
+        <label for="watchDate">Date watched</label>
+        <input type="date" id="watchDate">
+    </div>
+
+    <div class="field">
+        <label>Star rating</label>
+        <div class="rating-grid" id="ratingGrid">
+            <label class="rating-option">
+                <input type="radio" name="rating" value="1">
+                <span>⭐ 1</span>
+            </label>
+            <label class="rating-option">
+                <input type="radio" name="rating" value="2">
+                <span>⭐ 2</span>
+            </label>
+            <label class="rating-option">
+                <input type="radio" name="rating" value="3" checked>
+                <span>⭐ 3</span>
+            </label>
+            <label class="rating-option">
+                <input type="radio" name="rating" value="4">
+                <span>⭐ 4</span>
+            </label>
+            <label class="rating-option">
+                <input type="radio" name="rating" value="5">
+                <span>⭐ 5</span>
+            </label>
+        </div>
+    </div>
+
+    <details id="hideableSection" class="collapsible">
+        <summary>Show more options</summary>
+        <div class="field">
+            <label>Where did you see it?</label>
+            <div class="radio-group">
+                <label class="radio-option">
+                    <input type="radio" name="location" value="Cinema" checked>
+                    Cinema
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="location" value="Home">
+                    Home
+                </label>
+            </div>
+        </div>
+
+    <div class="field">
+        <label for="withWho">Who did you see it with?</label>
+        <select id="withWho">
+            <option value="">Choose a person</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="reviewText">Review text</label>
+        <textarea id="reviewText" placeholder="Write your thoughts about the film..."></textarea>
+    </div>
+
+    <div class="field">
+        <label>What were you eating/drinking?</label>
+        <div class="emoji-grid" id="snackGrid">
+            <label class="emoji-option" data-value="Popcorn">
+                <input type="radio" name="snack" value="Popcorn" checked>
+                <span>🍿 Popcorn</span>
+            </label>
+            <label class="emoji-option" data-value="Coke">
+                <input type="radio" name="snack" value="Coke">
+                <span>🥤 Coke</span>
+            </label>
+            <label class="emoji-option" data-value="Cup of tea">
+                <input type="radio" name="snack" value="Cup of tea">
+                <span>🍵 Cup of tea</span>
+            </label>
+            <label class="emoji-option" data-value="Nachos">
+                <input type="radio" name="snack" value="Nachos">
+                <span>🫓 Nachos</span>
+            </label>
+            <label class="emoji-option" data-value="Chocolate">
+                <input type="radio" name="snack" value="Chocolate">
+                <span>🍫 Chocolate</span>
+            </label>
+        </div>
+    </div>
+
+    <button class="button" id="saveButton">Save entry</button>
+
+    <div class="summary" id="summary" style="display:none;">
+        <h2>Entry saved</h2>
+        <p><strong>Movie:</strong> <span id="summaryTitle"></span></p>
+        <p><strong>Watched:</strong> <span id="summaryDate"></span></p>
+        <p><strong>Location:</strong> <span id="summaryLocation"></span></p>
+        <p><strong>With:</strong> <span id="summaryWith"></span></p>
+        <p><strong>Snack:</strong> <span id="summarySnack"></span></p>
+        <p><strong>Rating:</strong> <span id="summaryRating"></span></p>
+        <p><strong>Review:</strong> <span id="summaryReview"></span></p>
+    </div>
+    </details>
+</div>
+
+<script>
+const names = [
+    'Alex', 'Maya', 'Sam', 'Jordan', 'Lily', 'Ethan', 'Sophie', 'Noah', 'Ava', 'Leo'
+];
+
+const withWhoSelect = document.getElementById('withWho');
+
+names.forEach(name => {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    withWhoSelect.appendChild(option);
+});
+
+const saveButton = document.getElementById('saveButton');
+const summary = document.getElementById('summary');
+const snackGrid = document.getElementById('snackGrid');
+const ratingGrid = document.getElementById('ratingGrid');
+
+function updateSelectionGrid(grid, selectedClass) {
+    grid.querySelectorAll('label').forEach(label => {
+        label.classList.remove(selectedClass);
+    });
+    const checked = grid.querySelector('input:checked');
+    if (checked) {
+        checked.closest('label').classList.add(selectedClass);
+    }
+}
+
+updateSelectionGrid(snackGrid, 'selected');
+updateSelectionGrid(ratingGrid, 'selected');
+
+snackGrid.addEventListener('change', () => updateSelectionGrid(snackGrid, 'selected'));
+ratingGrid.addEventListener('change', () => updateSelectionGrid(ratingGrid, 'selected'));
+
+saveButton.addEventListener('click', () => {
+    const title = document.getElementById('movieTitle').value.trim() || 'Untitled film';
+    const date = document.getElementById('watchDate').value;
+    const location = document.querySelector('input[name="location"]:checked').value;
+    const withWho = withWhoSelect.value || 'Nobody';
+    const snack = document.querySelector('input[name="snack"]:checked')?.value || 'Nothing';
+    const reviewText = document.getElementById('reviewText').value.trim() || 'No review text provided.';
+    const rating = document.querySelector('input[name="rating"]:checked')?.value || '3';
+
+    document.getElementById('summaryTitle').textContent = title;
+    document.getElementById('summaryDate').textContent = date ? new Date(date).toLocaleDateString() : 'Not set';
+    document.getElementById('summaryLocation').textContent = location;
+    document.getElementById('summaryWith').textContent = withWho;
+    document.getElementById('summarySnack').textContent = snack;
+        document.getElementById('summaryReview').textContent = reviewText;
+        document.getElementById('summaryRating').textContent = `${rating} / 5`;
+
+        summary.style.display = 'block';
+    });
+
+
+</script>
+
+</body>
+</html>

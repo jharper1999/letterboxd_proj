@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Movie Diary</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        margin-bottom: 10px;
+        color: #4CAF50;
+    }
+
+    h3 {
+        color: #4CAF50;
+    }
+
+    select {
+        padding: 6px;
+        margin-bottom: 20px;
+        background: #333;
+        color: #e0e0e0;
+        border: 1px solid #555;
+        border-radius: 4px;
+    }
+
+    .tags, .film {
+        background: #1e1e1e;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid #333;
+    }
+
+    .remove-btn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .remove-btn:hover {
+        background: #45a049;
+    }
+
+    .film-list {
+        margin-top: 20px;
+    }
+
+    .film {
+        display: flex;
+        align-items: center;
+        min-height: 100px;
+    }
+
+    .film-poster {
+        width: 60px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+
+    .film-title {
+        font-weight: bold;
+        color: #e0e0e0;
+    }
+
+    .film small {
+        color: #bbb;
+    }
+
+    .film-rating {
+        color: #FFD700;
+        font-size: 18px;
+    }
+
+    .main-content {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .film-list {
+        flex: 2;
+    }
+
+    .widget {
+        flex: 1;
+        background: #1e1e1e;
+        color: #e0e0e0;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        height: fit-content;
+    }
+
+    /* Widget */
+    .widget h3 {
+        margin-top: 0;
+        color: #4CAF50;
+    }
+
+    .stat {
+        margin: 5px 0;
+    }
+</style>
+</head>
+<body>
+
+<h1>Movie Diary</h1>
+
+<select>
+    <option>Choose a tag</option>
+</select>
+
+<h3>Selected Tags</h3>
+
+<div class="tags">
+    w-halene
+    <button class="remove-btn">Remove</button>
+</div>
+
+<div class="tags">
+    in-sheffield
+    <button class="remove-btn">Remove</button>
+</div>
+
+<div class="main-content">
+    <div class="film-list" id="filmList"></div>
+    <div class="widget">
+        <h3>📊 Your Stats</h3>
+        <div class="stat">⭐ Average Rating: <span id="avgRating"></span></div>
+        <div class="stat">🎬 First Film Watched: <span id="firstFilm"></span></div>
+        <div class="stat">🎬 Last Film Watched: <span id="lastFilm"></span></div>
+        <canvas id="watchChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<script>
+const films = [
+    {
+        title: "Carol",
+        year: 2015,
+        watched: "2025-12-06",
+        rating: 4,
+        poster: "Carol_film_poster.jpg"
+    },
+    {
+        title: "When Harry Met Sally...",
+        year: 1989,
+        watched: "2025-10-27",
+        rating: 5,
+        poster: "when-harry-met-sally.jpg"
+    },
+    {
+        title: "One Battle After Another",
+        year: 2025,
+        watched: "2025-10-03",
+        rating: 3,
+        poster: "obaa.jpg"
+    }
+];
+
+// Render films
+const filmList = document.getElementById("filmList");
+
+films.forEach(film => {
+    const div = document.createElement("div");
+    div.className = "film";
+    div.innerHTML = `
+        <img src="${film.poster}" alt="${film.title} poster" class="film-poster">
+        <div>
+            <div class="film-title">${film.title} (${film.year})</div>
+            <small>Watched: ${new Date(film.watched).toLocaleDateString()}</small>
+        </div>
+        <div class="film-rating">⭐ ${film.rating}</div>
+    `;
+    filmList.appendChild(div);
+});
+
+// Stats calculations
+const avgRating = (
+    films.reduce((sum, f) => sum + f.rating, 0) / films.length
+).toFixed(1);
+
+const sortedByDate = [...films].sort((a, b) => new Date(a.watched) - new Date(b.watched));
+
+const firstFilm = sortedByDate[0].title;
+const lastFilm = sortedByDate[sortedByDate.length - 1].title;
+
+// Inject into widget
+document.getElementById("avgRating").textContent = avgRating;
+document.getElementById("firstFilm").textContent = firstFilm;
+document.getElementById("lastFilm").textContent = lastFilm;
+
+// Create chart
+const monthCounts = {};
+films.forEach(film => {
+    const date = new Date(film.watched);
+    const monthKey = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+    monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+});
+
+// Find min and max dates
+const dates = films.map(f => new Date(f.watched));
+const minDate = new Date(Math.min(...dates));
+const maxDate = new Date(Math.max(...dates));
+
+// Generate all months between min and max
+const labels = [];
+let current = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+const end = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 0);
+
+while (current <= end) {
+    labels.push(current.toLocaleString('default', { month: 'long', year: 'numeric' }));
+    current.setMonth(current.getMonth() + 1);
+}
+
+const data = labels.map(month => monthCounts[month] || 0);
+
+const ctx = document.getElementById('watchChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Films Watched',
+            data: data,
+            backgroundColor: '#4CAF50',
+            borderColor: '#45a049',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#e0e0e0'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#e0e0e0'
+                },
+                grid: {
+                    color: '#333'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#e0e0e0',
+                    stepSize: 1
+                },
+                grid: {
+                    color: '#333'
+                }
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
